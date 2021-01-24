@@ -1,3 +1,4 @@
 rootProject.name = "playground-ksp-dev-experimental"
 
-include(":processor")
+include("processor")
+include("app")

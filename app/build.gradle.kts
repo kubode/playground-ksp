@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform")
+    id("com.google.devtools.ksp") version "1.4.20-dev-experimental-20210120"
 }
 
 kotlin {
@@ -17,4 +18,8 @@ kotlin {
             }
         }
     }
+}
+
+dependencies {
+    ksp(project(":processor"))
 }

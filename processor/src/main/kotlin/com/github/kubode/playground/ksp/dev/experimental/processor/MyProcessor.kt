@@ -1,4 +1,4 @@
-package com.github.kubode.playground.ksp.dev.experimental
+package com.github.kubode.playground.ksp.dev.experimental.processor
 
 import com.google.auto.service.AutoService
 import com.google.devtools.ksp.processing.CodeGenerator
@@ -14,14 +14,13 @@ class MyProcessor : SymbolProcessor {
         codeGenerator: CodeGenerator,
         logger: KSPLogger
     ) {
-        TODO("Not yet implemented")
+        logger.info("options: $options, kotlinVersion: $kotlinVersion")
     }
 
     override fun process(resolver: Resolver) {
-        TODO("Not yet implemented")
+        // TODO
     }
 
     override fun finish() {
-        TODO("Not yet implemented")
     }
 }

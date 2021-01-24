@@ -1,10 +1,12 @@
 package com.github.kubode.playground.ksp.dev.experimental
 
+import com.google.auto.service.AutoService
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 
+@AutoService(SymbolProcessor::class)
 class MyProcessor : SymbolProcessor {
     override fun init(
         options: Map<String, String>,

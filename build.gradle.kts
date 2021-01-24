@@ -5,20 +5,20 @@ buildscript {
 }
 
 plugins {
-    kotlin("multiplatform")
+    kotlin("multiplatform") version "1.4.21"
 }
 
-group = "org.github.kubode"
-version = "1.0.0-SNAPSHOT"
+subprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 
-repositories {
-    mavenCentral()
+    group = "org.github.kubode"
+    version = "1.0.0-SNAPSHOT"
 }
 
 kotlin {
-    /* Targets configuration omitted. 
-    *  To find out how to configure the targets, please follow the link:
-    *  https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#setting-up-targets */
     jvm()
 
     sourceSets {

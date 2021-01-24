@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.8" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="playground-ksp-dev-experimental.commonMain" target="1.6" />
+      <module name="playground-ksp-dev-experimental.commonTest" target="1.6" />
+      <module name="playground-ksp-dev-experimental.jvmMain" target="1.6" />
+      <module name="playground-ksp-dev-experimental.jvmTest" target="1.6" />
+    </bytecodeTargetLevel>
   </component>
 </project>

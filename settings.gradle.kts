@@ -1,7 +1,8 @@
 rootProject.name = "playground-ksp-dev-experimental"
 
-include("processor")
+include("annotation")
 include("app")
+include("processor")
 
 pluginManagement {
     repositories {

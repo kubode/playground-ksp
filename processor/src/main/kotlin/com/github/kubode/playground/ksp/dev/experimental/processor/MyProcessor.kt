@@ -8,6 +8,10 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 
 @AutoService(SymbolProcessor::class)
 class MyProcessor : SymbolProcessor {
+
+    lateinit var codeGenerator: CodeGenerator
+    lateinit var logger: KSPLogger
+
     override fun init(
         options: Map<String, String>,
         kotlinVersion: KotlinVersion,
@@ -15,6 +19,8 @@ class MyProcessor : SymbolProcessor {
         logger: KSPLogger
     ) {
         logger.info("options: $options, kotlinVersion: $kotlinVersion")
+        this.codeGenerator = codeGenerator
+        this.logger = logger
     }
 
     override fun process(resolver: Resolver) {

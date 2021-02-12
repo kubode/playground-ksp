@@ -42,6 +42,7 @@ class MyProcessor : SymbolProcessor {
     private inner class PropertyVisitor : KSVisitorVoid() {
         override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) {
             super.visitPropertyDeclaration(property, data)
+            logger.info("visitPropertyDeclaration($property)")
         }
     }
 

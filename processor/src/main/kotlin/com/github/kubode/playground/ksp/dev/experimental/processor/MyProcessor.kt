@@ -2,13 +2,12 @@ package com.github.kubode.playground.ksp.dev.experimental.processor
 
 import com.github.kubode.playground.ksp.dev.experimental.annotation.Mock
 import com.google.auto.service.AutoService
-import com.google.devtools.ksp.processing.CodeGenerator
-import com.google.devtools.ksp.processing.KSPLogger
-import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.closestClassDeclaration
+import com.google.devtools.ksp.isAbstract
+import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
-import com.google.devtools.ksp.symbol.KSVisitorVoid
+import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.validate
 
 @AutoService(SymbolProcessor::class)
@@ -35,15 +34,49 @@ class MyProcessor : SymbolProcessor {
         val (validSymbols, invalidSymbols) = symbols.partition { it.validate() }
         logger.info("validSymbols: $validSymbols, invalidSymbols: $invalidSymbols")
         val props = validSymbols.filterIsInstance<KSPropertyDeclaration>()
-                val types = props.map { it.type}.forEach { logger.warn(it.toString())}
+        logger.info("props: $props")
+        val types = props.map { it.type }.toSet()
+        logger.info("types: $types")
+        types.forEach { generateMockByType(it) }
+        val parents = props.mapNotNull { it.parentDeclaration }.toSet()
+        logger.info("parents: $parents")
         return invalidSymbols
     }
 
-    private inner class PropertyVisitor : KSVisitorVoid() {
-        override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) {
-            super.visitPropertyDeclaration(property, data)
-            logger.info("visitPropertyDeclaration($property)")
-        }
+    private fun generateMockByType(typeRef: KSTypeReference) {
+        val type = typeRef.resolve()
+        val packageName = type.declaration.packageName.getQualifier()
+        val targetFqn = type.declaration.qualifiedName?.asString()!!
+        val targetClassName = type.declaration.simpleName.getShortName()
+        val fileName = "${targetClassName}Mock"
+        val className = "${targetClassName}Mock"
+        val abstractFunctions = type.declaration.closestClassDeclaration()!!.getAllFunctions().filter { it.isAbstract }
+        val abstractProps = type.declaration.closestClassDeclaration()!!.getAllProperties().filter { it.isAbstract() }
+        val output = codeGenerator.createNewFile(
+            dependencies = Dependencies(true),
+            packageName = packageName,
+            fileName = fileName,
+        )
+        // TODO: Improve readability.
+        output.write(
+            """
+                package $packageName
+                
+                import $targetFqn
+                
+                class $className : $targetClassName {
+                    
+                    ${
+                abstractFunctions
+                    .map { func ->
+                        "override fun ${func.simpleName.asString()}(${func.parameters.map {"${it.name!!.asString()}: ${it.type.resolve().declaration.qualifiedName!!.asString()}"}.joinToString(", ")}) = TODO()"
+                    }
+                    .joinToString("\n")
+            }
+                }
+            """.trimIndent().toByteArray()
+        )
+        output.close()
     }
 
     override fun finish() {

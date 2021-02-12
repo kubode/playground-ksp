@@ -8,3 +8,5 @@ dependencies {
     testImplementation(project(":annotation"))
     testImplementation(kotlin("test-junit"))
 }
+
+sourceSets.getByName("test").java.srcDirs("build/generated/ksp/test/kotlin")

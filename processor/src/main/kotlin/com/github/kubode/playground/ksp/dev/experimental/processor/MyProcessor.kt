@@ -2,14 +2,14 @@ package com.github.kubode.playground.ksp.dev.experimental.processor
 
 import com.github.kubode.playground.ksp.dev.experimental.annotation.Mock
 import com.google.auto.service.AutoService
-import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSPropertyDeclaration
+import com.google.devtools.ksp.symbol.KSVisitorVoid
+import com.google.devtools.ksp.validate
 
 @AutoService(SymbolProcessor::class)
 class MyProcessor : SymbolProcessor {
@@ -29,7 +29,16 @@ class MyProcessor : SymbolProcessor {
     }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        return emptyList()
+        val symbols = resolver.getSymbolsWithAnnotation(Mock::class.qualifiedName!!)
+        val (validSymbols, invalidSymbols) = symbols.partition { it.validate() }
+        validSymbols
+            .filterIsInstance<KSPropertyDeclaration>()
+            .forEach { it.accept(Visitor(), Unit) }
+        return invalidSymbols
+    }
+
+    private inner class Visitor : KSVisitorVoid() {
+
     }
 
     override fun finish() {

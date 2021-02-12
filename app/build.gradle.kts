@@ -13,8 +13,14 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
+                implementation(project(":annotation"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+            }
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
             }
         }
     }

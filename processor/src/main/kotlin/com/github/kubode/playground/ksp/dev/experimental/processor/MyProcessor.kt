@@ -29,16 +29,20 @@ class MyProcessor : SymbolProcessor {
     }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
+        logger.info("process")
         val symbols = resolver.getSymbolsWithAnnotation(Mock::class.qualifiedName!!)
+        logger.info("symbols: ${symbols.size}")
         val (validSymbols, invalidSymbols) = symbols.partition { it.validate() }
-        validSymbols
-            .filterIsInstance<KSPropertyDeclaration>()
-            .forEach { it.accept(Visitor(), Unit) }
+        logger.info("validSymbols: $validSymbols, invalidSymbols: $invalidSymbols")
+        val props = validSymbols.filterIsInstance<KSPropertyDeclaration>()
+                val types = props.map { it.type}.forEach { logger.warn(it.toString())}
         return invalidSymbols
     }
 
-    private inner class Visitor : KSVisitorVoid() {
-
+    private inner class PropertyVisitor : KSVisitorVoid() {
+        override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) {
+            super.visitPropertyDeclaration(property, data)
+        }
     }
 
     override fun finish() {

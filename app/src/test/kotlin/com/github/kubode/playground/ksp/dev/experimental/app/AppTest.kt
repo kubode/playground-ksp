@@ -3,11 +3,14 @@ package com.github.kubode.playground.ksp.dev.experimental.app
 import com.github.kubode.playground.ksp.dev.experimental.annotation.Mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-
+@Mock
 class AppTest {
 
     @Mock
     lateinit var useCase: UseCase
+
+    @Mock
+    lateinit var withGenerics: WithGenerics<Int>
 
     @BeforeTest
     fun setUp() {

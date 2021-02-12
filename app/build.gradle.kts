@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    ksp(project(":processor"))
+    kspTest(project(":processor"))
     testImplementation(project(":annotation"))
     testImplementation(kotlin("test-junit"))
 }

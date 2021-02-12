@@ -28,24 +28,8 @@ class MyProcessor : SymbolProcessor {
         this.logger = logger
     }
 
-    override fun process(resolver: Resolver) {
-        logger.info("process start")
-        val symbols = resolver.getSymbolsWithAnnotation(Mock::class.qualifiedName!!)
-        if (symbols.isEmpty()) {
-            logger.info("Mock not configured.")
-            return
-        }
-
-        logger.info("$symbols")
-        symbols.forEach { it.process(resolver) }
-    }
-
-    private fun KSAnnotated.process(resolver: Resolver) {
-        val mockTypeDef = checkNotNull(resolver.getClassDeclarationByName<Mock>()).qualifiedName!!
-        logger.info("${this.annotations} $mockTypeDef")
-        val mockDef = annotations.firstOrNull { it.apply { logger.info("$this")}.annotationType.resolve() == mockTypeDef }
-//        val classes = mockDef.arguments.first { it.name?.asString() == Mock::classesToGenerateMock.name }
-
+    override fun process(resolver: Resolver): List<KSAnnotated> {
+        return emptyList()
     }
 
     override fun finish() {

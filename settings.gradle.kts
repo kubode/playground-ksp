@@ -1,4 +1,4 @@
-rootProject.name = "playground-ksp-dev-experimental"
+rootProject.name = "playground-ksp"
 
 include("annotation")
 include("app")

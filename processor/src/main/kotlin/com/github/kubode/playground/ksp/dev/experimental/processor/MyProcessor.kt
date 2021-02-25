@@ -38,13 +38,13 @@ class MyProcessor : SymbolProcessor {
         logger.info("props: $props")
         val types = props.map { it.type }.toSet()
         logger.info("types: $types")
-        types.forEach { it.accept(TypeVisitor(), Unit) }
+        types.forEach { it.accept(TypeReferenceVisitor(), Unit) }
         val parents = props.mapNotNull { it.parentDeclaration }.toSet()
         logger.info("parents: $parents")
         return invalidSymbols
     }
 
-    inner class TypeVisitor : KSVisitorVoid() {
+    inner class TypeReferenceVisitor : KSVisitorVoid() {
         override fun visitTypeReference(typeReference: KSTypeReference, data: Unit) {
             logger.info("typeReference: ${typeReference.resolve()}")
             val type = typeReference.resolve()

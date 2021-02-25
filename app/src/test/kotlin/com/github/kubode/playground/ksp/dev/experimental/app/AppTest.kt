@@ -20,6 +20,15 @@ class AppTest {
 
     @Test
     fun test() {
-
+        every { useCase() } just runs
+        verify { useCase() }
     }
 }
+
+class Wrapper<T>(block: () -> T)
+fun <T> every(block: () -> T): Wrapper<T> {
+    return Wrapper(block)
+}
+infix fun <T> Wrapper<T>.just(runs: runs) {}
+object runs
+fun verify(block: () -> Unit) {}

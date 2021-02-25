@@ -87,7 +87,4 @@ class MyProcessor : SymbolProcessor {
             output.close()
         }
     }
-
-    override fun finish() {
-    }
 }

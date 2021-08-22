@@ -11,7 +11,7 @@ import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
 
-class MyProcessor(
+class MySymbolProcessor(
     private val environment: SymbolProcessorEnvironment,
 ) : SymbolProcessor {
 

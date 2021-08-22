@@ -11,27 +11,16 @@ import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
 
-@AutoService(SymbolProcessor::class)
-class MyProcessor : SymbolProcessor {
+class MyProcessor(
+    private val environment: SymbolProcessorEnvironment,
+) : SymbolProcessor {
 
-    lateinit var codeGenerator: CodeGenerator
-    lateinit var logger: KSPLogger
-
-    override fun init(
-        options: Map<String, String>,
-        kotlinVersion: KotlinVersion,
-        codeGenerator: CodeGenerator,
-        logger: KSPLogger
-    ) {
-        logger.info("options: $options, kotlinVersion: $kotlinVersion")
-        this.codeGenerator = codeGenerator
-        this.logger = logger
-    }
+    private val codeGenerator: CodeGenerator = environment.codeGenerator
+    private val logger: KSPLogger = environment.logger
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         logger.info("process")
         val symbols = resolver.getSymbolsWithAnnotation(Mock::class.qualifiedName!!)
-        logger.info("symbols: ${symbols.size}")
         val (validSymbols, invalidSymbols) = symbols.partition { it.validate() }
         logger.info("validSymbols: $validSymbols, invalidSymbols: $invalidSymbols")
         val props = validSymbols.filterIsInstance<KSPropertyDeclaration>()
@@ -54,9 +43,11 @@ class MyProcessor : SymbolProcessor {
             val fileName = "${targetClassName}Mock"
             val className = "${targetClassName}Mock"
             val abstractFunctions =
-                type.declaration.closestClassDeclaration()!!.getAllFunctions().filter { it.isAbstract }
+                type.declaration.closestClassDeclaration()!!.getAllFunctions()
+                    .filter { it.isAbstract }
             val abstractProps =
-                type.declaration.closestClassDeclaration()!!.getAllProperties().filter { it.isAbstract() }
+                type.declaration.closestClassDeclaration()!!.getAllProperties()
+                    .filter { it.isAbstract() }
             val output = codeGenerator.createNewFile(
                 dependencies = Dependencies(true),
                 packageName = packageName,

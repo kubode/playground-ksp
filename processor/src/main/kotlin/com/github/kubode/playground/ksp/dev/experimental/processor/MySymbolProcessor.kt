@@ -48,7 +48,7 @@ class MySymbolProcessor(
             val abstractProps =
                 type.declaration.closestClassDeclaration()!!.getAllProperties()
                     .filter { it.isAbstract() }
-            val output = codeGenerator.createNewFile(
+            codeGenerator.createNewFile(
                 dependencies = Dependencies(true),
                 packageName = packageName,
                 fileName = fileName,

@@ -1,6 +1,6 @@
 rootProject.name = "playground-ksp"
 
-include("annotation")
+include("api")
 include("app")
 include("processor")
 

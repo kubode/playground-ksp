@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    ksp(project(":processor"))
-    implementation(project(":api"))
+    kspTest(project(":processor"))
+    testImplementation(project(":api"))
     testImplementation(kotlin("test-junit"))
 }

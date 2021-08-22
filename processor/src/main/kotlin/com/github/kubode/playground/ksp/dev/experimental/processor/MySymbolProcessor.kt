@@ -52,30 +52,30 @@ class MySymbolProcessor(
                 dependencies = Dependencies(true),
                 packageName = packageName,
                 fileName = fileName,
-            )
-            // TODO: Improve readability.
-            output.write(
-                """
-                package $packageName
-                
-                import $targetFqn
-                
-                class $className : $targetClassName {
+            ).use {
+                // TODO: Improve readability.
+                it.write(
+                    """
+                    package $packageName
                     
-                    ${
-                    abstractFunctions
-                        .map { func ->
-                            "override fun ${func.simpleName.asString()}(${
-                                func.parameters.map { "${it.name!!.asString()}: ${it.type.resolve().declaration.qualifiedName!!.asString()}" }
-                                    .joinToString(", ")
-                            }) = TODO()"
-                        }
-                        .joinToString("\n")
-                }
-                }
-            """.trimIndent().toByteArray()
-            )
-            output.close()
+                    import $targetFqn
+                    
+                    class $className : $targetClassName {
+                        
+                        ${
+                        abstractFunctions
+                            .map { func ->
+                                "override fun ${func.simpleName.asString()}(${
+                                    func.parameters.map { "${it.name!!.asString()}: ${it.type.resolve().declaration.qualifiedName!!.asString()}" }
+                                        .joinToString(", ")
+                                }) = TODO()"
+                            }
+                            .joinToString("\n")
+                    }
+                    }
+                    """.trimIndent().toByteArray()
+                )
+            }
         }
     }
 }

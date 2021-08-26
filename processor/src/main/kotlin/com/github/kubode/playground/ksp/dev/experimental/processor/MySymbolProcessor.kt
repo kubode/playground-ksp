@@ -10,6 +10,7 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.google.devtools.ksp.validate
+import com.squareup.kotlinpoet.*
 
 class MySymbolProcessor(
     private val environment: SymbolProcessorEnvironment,
@@ -25,9 +26,9 @@ class MySymbolProcessor(
         logger.info("validSymbols: $validSymbols, invalidSymbols: $invalidSymbols")
         val props = validSymbols.filterIsInstance<KSPropertyDeclaration>()
         logger.info("props: $props")
-        val types = props.map { it.type }.toSet()
+        val types = props.map { it.type.resolve() }.toSet()
         logger.info("types: $types")
-        types.forEach { it.accept(TypeReferenceVisitor(), Unit) }
+        types.forEach { it.declaration.accept(TypeReferenceVisitor(), Unit) }
         val parents = props.mapNotNull { it.parentDeclaration }.toSet()
         logger.info("parents: $parents")
         return invalidSymbols
@@ -37,9 +38,9 @@ class MySymbolProcessor(
         override fun visitTypeReference(typeReference: KSTypeReference, data: Unit) {
             logger.info("typeReference: ${typeReference.resolve()}")
             val type = typeReference.resolve()
-            val packageName = type.declaration.packageName.getQualifier()
+            val packageName = type.declaration.packageName.asString()
             val targetFqn = type.declaration.qualifiedName?.asString()!!
-            val targetClassName = type.declaration.simpleName.getShortName()
+            val targetClassName = type.declaration.simpleName.asString()
             val fileName = "${targetClassName}Mock"
             val className = "${targetClassName}Mock"
             val abstractFunctions =
@@ -52,29 +53,33 @@ class MySymbolProcessor(
                 dependencies = Dependencies(true),
                 packageName = packageName,
                 fileName = fileName,
-            ).use {
-                // TODO: Improve readability.
-                it.write(
-                    """
-                    package $packageName
-                    
-                    import $targetFqn
-                    
-                    class $className : $targetClassName {
-                        
-                        ${
-                        abstractFunctions
-                            .map { func ->
-                                "override fun ${func.simpleName.asString()}(${
-                                    func.parameters.map { "${it.name!!.asString()}: ${it.type.resolve().declaration.qualifiedName!!.asString()}" }
-                                        .joinToString(", ")
-                                }) = TODO()"
-                            }
-                            .joinToString("\n")
-                    }
-                    }
-                    """.trimIndent().toByteArray()
-                )
+            ).writer().use { writer ->
+                logger.info("packageName: $packageName")
+                FileSpec.builder(packageName, fileName)
+                    .addType(
+                        TypeSpec.classBuilder(className)
+                            .addSuperinterface(ClassName.bestGuess(targetFqn))
+                            .addFunctions(
+                                abstractFunctions
+                                    .map { func ->
+                                        FunSpec.builder(func.simpleName.asString())
+                                            .addModifiers(KModifier.OVERRIDE)
+                                            .addParameters(
+                                                func.parameters.map { param ->
+                                                    ParameterSpec(
+                                                        param.name!!.asString(),
+                                                        ClassName.bestGuess(param.type.resolve().declaration.qualifiedName!!.asString()),
+                                                    )
+                                                }
+                                            )
+                                            .build()
+                                    }
+                                    .asIterable()
+                            )
+                            .build()
+                    )
+                    .build()
+                    .writeTo(writer)
             }
         }
     }

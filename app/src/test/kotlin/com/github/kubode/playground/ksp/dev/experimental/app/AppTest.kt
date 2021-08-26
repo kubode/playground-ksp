@@ -9,6 +9,9 @@ class AppTest {
     @Mock
     lateinit var useCase: UseCase
 
+    @Mock
+    lateinit var useCase2: UseCase
+
     // TODO: Support generics
 //    @Mock
 //    lateinit var withGenerics: WithGenerics<Int>

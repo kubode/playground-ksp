@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.5.30-1.0.0-beta08")
-    implementation("com.google.auto.service:auto-service-annotations:1.0")
-    implementation("com.squareup:kotlinpoet:1.9.0")
+    implementation(libs.ksp.symbolProcessingApi)
+    implementation(libs.autoService.annotations)
+    implementation(libs.kotlinPoet)
     implementation(project(":api"))
-    kapt("com.google.auto.service:auto-service:1.0")
+    kapt(libs.autoService.compiler)
 }

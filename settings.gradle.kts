@@ -9,7 +9,7 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.namespace in setOf("org.jetbrains.kotlin", "org.jetbrains.kotlin.plugin")) {
+            if (requested.id.id.startsWith("org.jetbrains.kotlin.")) {
                 useVersion("1.5.30")
             }
         }
